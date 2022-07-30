@@ -8,7 +8,7 @@ const { Strategy, ExtractJwt } = require("passport-jwt");
 const User = require("./models/usersSchema");
 const contactsRouter = require("./routes/api/contacts");
 const usersRouter = require("./routes/api/users");
-
+const path = require("path");
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
 
 const db = mongoose.connection;
@@ -21,6 +21,8 @@ const app = express();
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 
+app.use(express.static(path.join(__dirname, "./public")));
+app.use(express.static(path.join(__dirname, "/")));
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
@@ -46,6 +48,9 @@ passport.use(
 );
 
 // Routes
+app.get("/", (req, res, next) => {
+  res.json({ message: "Hello, World!" });
+});
 app.use("/api/contacts", contactsRouter);
 app.use("/api/users", usersRouter);
 
